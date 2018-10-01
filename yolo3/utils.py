@@ -43,8 +43,8 @@ def get_random_data(annotation_line, input_shape, random=True, max_boxes=20, jit
     iw, ih = image.size
     h, w = input_shape
     box = np.array([np.array(list(map(int,box.split(',')))) for box in line[1:]])
-
-    if not random:
+    
+    if not random:        
         # resize image
         scale = min(w/iw, h/ih)
         nw = int(iw*scale)
@@ -68,16 +68,21 @@ def get_random_data(annotation_line, input_shape, random=True, max_boxes=20, jit
             box_data[:len(box)] = box
 
         return image_data, box_data
-
+    
+    print('coockoo')
+    
     # resize image
-    new_ar = w/h * rand(1-jitter,1+jitter)/rand(1-jitter,1+jitter)
-    scale = rand(.25, 2)
+    new_ar = w/h * rand(1-jitter,1+jitter)/rand(1-jitter,1+jitter)  
+    print(new_ar)
+    scale = rand(.8, 1.2)    
     if new_ar < 1:
         nh = int(scale*h)
         nw = int(nh*new_ar)
     else:
         nw = int(scale*w)
         nh = int(nw/new_ar)
+        
+    print(new_ar,scale,nh,nw)
     image = image.resize((nw,nh), Image.BICUBIC)
 
     # place image
@@ -90,6 +95,7 @@ def get_random_data(annotation_line, input_shape, random=True, max_boxes=20, jit
     # flip image or not
     flip = rand()<.5
     if flip: image = image.transpose(Image.FLIP_LEFT_RIGHT)
+    
     image_data = np.array(image)/255.
     # distort image
 #     hue = rand(-hue, hue)
